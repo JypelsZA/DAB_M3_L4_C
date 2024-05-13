@@ -42,13 +42,18 @@ router.get('/login', function (req, res, next) {
 	const username = req.user?.username;
 	res.render('login', { username });
 });
+
 router.post(
 	'/login/password',
-	passport.authenticate('local', {
-		successReturnToOrRedirect: '/',
-		failureRedirect: '/login',
-		failureMessage: true,
-	})
+	passport.authenticate('local', { failureRedirect: '/login', failureMessage: true }),
+	function (req, res) {
+		// Redirect Admin User to /hotels
+		if (req.user.role === 'Admin') {
+			res.redirect('/hotels');  
+		} else {
+			res.redirect('/'); // Redirect Defualt Users to /
+		}
+	}
 );
 
 router.post('/logout', function (req, res, next) {
